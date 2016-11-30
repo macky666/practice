@@ -162,40 +162,69 @@
 
     <div class="msg">
       <img src="member_picture/<?php echo h($post['picture']); ?>" width="48" height="48" alt="<?php echo h($post['name']); ?>" />
-      <p><?php echo h($post['message']); ?><span class="name">☆<?php echo h($post['name']); ?></span>
-      [<a href="index.php?res=<?php echo h($post['id']); ?>">Re</a>]</p>
-      <p class="day">
-      <a href="view.php?id=<?php echo h($post['id']); ?>">
-      <?php echo h($post['created']); ?>
-      </a>
-      <?php if($post['reply_post_id'] > 0):?>
-      <a href="view.php?id=<?php echo h($post['reply_post_id']); ?>"> 返信元のメッセージ</a>
-      <?php endif; ?>
+        <p><?php echo h($post['message']); ?><span class="name">☆<?php echo h($post['name']); ?></span>
+        [<a href="index.php?res=<?php echo h($post['id']); ?>">Re</a>]</p>
+        <p class="day">
+          <a href="view.php?id=<?php echo h($post['id']); ?>">
+        <?php echo h($post['created']); ?>
+        </a>
+        <?php if($post['reply_post_id'] > 0):?>
+          <a href="view.php?id=<?php echo h($post['reply_post_id']); ?>"> 返信元のメッセージ</a>
+        <?php endif; ?>
+
+
+        <!-- // いいね！件数のカウント -->
+        <?php 
+          $sql = sprintf('SELECT COUNT(*) AS cnt 
+                          FROM `likes` 
+                          WHERE `tweet_id`=%d',
+                          mysqli_real_escape_string($db, $post['id']));
+          $rec = mysqli_query($db, $sql) or die(mysqli_error($db));
+          if($table = mysqli_fetch_assoc($rec)){
+              $like_cnt = $table['cnt'];
+          }else{
+              $like_cnt = 0;
+          }
+         ?>
+
+         <!-- フォロー件数のカウント -->
+         <?php 
+          $sql = sprintf('SELECT COUNT(*) AS cnt 
+                          FROM `followings` 
+                          WHERE `following_id`=%d',
+                          mysqli_real_escape_string($db, $post['member_id']));
+          $rec = mysqli_query($db, $sql) or die(mysqli_error($db));
+          if($table = mysqli_fetch_assoc($rec)){
+              $follow_cnt = $table['cnt'];
+          }else{
+              $follow_cnt = 0;
+          }
+         ?>
 
       <!-- ログインIDと投稿されたツイートのmember_idが一致しなければいいねボタンを表示する -->
       <?php if($_SESSION['id'] !== $post['member_id']): ?>
         <!-- 取得していた全ツイートIDの中からいいねが押される対象となるIDを取得 -->
         <?php if(in_array($post['id'],$like_tweets)): ?>
-        [<a href="likeaction.php?action=unlike&id=<?php echo $post['id']?>&member_id=<?php echo $_SESSION['id']; ?>">いいねを取り消す</a>]
+          [<a href="likeaction.php?action=unlike&id=<?php echo $post['id']?>&member_id=<?php echo $_SESSION['id']; ?>">いいねを取り消す</a>]<a >いいね件数：<?php echo $like_cnt; ?></a>]
         <?php else: ?>
-        [<a href="likeaction.php?action=like&id=<?php echo $post['id']?>&member_id=<?php echo $_SESSION['id']; ?>">いいね!</a>]
+          [<a href="likeaction.php?action=like&id=<?php echo $post['id']?>&member_id=<?php echo $_SESSION['id']; ?>">いいね!</a>]<a >いいね件数：<?php echo $like_cnt; ?></a>]
         <?php endif; ?>
 
 
         <!-- 取得していた全ツイートIDの中からフォローされる対象となるIDを取得 -->
         <?php if(in_array($post['member_id'],$follows)): ?>
-        [[<a href="followaction.php?action=unfollow&followid=<?php echo $post['member_id']?>&member_id=<?php echo $_SESSION['id']; ?>">フォローを外す</a>]]
+          [[<a href="followaction.php?action=unfollow&followid=<?php echo $post['member_id']?>&member_id=<?php echo $_SESSION['id']; ?>">フォローを外す</a>][<a>フォロワー数：<?php echo $follow_cnt; ?></a>]
         <?php else: ?>
-        [[<a href="followaction.php?action=follow&followid=<?php echo $post['member_id']?>&member_id=<?php echo $_SESSION['id']; ?>">フォローする</a>]]
+          [[<a href="followaction.php?action=follow&followid=<?php echo $post['member_id']?>&member_id=<?php echo $_SESSION['id']; ?>">フォローする</a>]][<a>フォロワー数：<?php echo $follow_cnt; ?></a>]
         <?php endif; ?>
        <?php endif; ?>
 
 
 
-      <?php if($_SESSION['id'] == $post['member_id']): ?>
-        [<a href="edit.php?id=<?php echo $post['id']; ?>" style="color: #00994C;">編集</a>]
-        [<a href="delete.php?id=<?php echo h($post['id']); ?>" style="color": #F33;>削除</a>]
-      <?php endif; ?>
+        <?php if($_SESSION['id'] == $post['member_id']): ?>
+          [<a href="edit.php?id=<?php echo $post['id']; ?>" style="color: #00994C;">編集</a>]
+          [<a href="delete.php?id=<?php echo h($post['id']); ?>" style="color": #F33;>削除</a>]
+        <?php endif; ?>
       </p>
 
     </div>
