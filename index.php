@@ -111,16 +111,16 @@
 
 
     // followingテーブルからデータを取ってくる
-    // $sql = sprintf('SELECT * 
-    //                 FROM `followings`
-    //                 WHERE follower_id = "%d"
-    //                 AND following_id = "%d"',
-    //                 mysqli_real_escape_string($db,$_SESSION['id']),
-    //                 mysqli_real_escape_string($db,$_POST['id'])
-    //                 );
-    // $follow = mysqli_query($db,$sql) or die(mysqli_error($db));
-    // $follower = mysqli_fetch_assoc($follow);
-    // $followers[] = $follow;
+    $sql = sprintf('SELECT * FROM `followings`
+                    WHERE follower_id = %d',
+                    mysqli_real_escape_string($db,$_SESSION['id'])
+                    );
+    $rec = mysqli_query($db,$sql) or die(mysqli_error($db));
+    $follows = array();
+     while($table = mysqli_fetch_assoc($rec)){
+         $follows[] = $table['following_id'];
+     }
+    
 
 
 
@@ -172,25 +172,29 @@
       <a href="view.php?id=<?php echo h($post['reply_post_id']); ?>"> 返信元のメッセージ</a>
       <?php endif; ?>
 
-      <!-- 投稿したメンバーと投稿されたツイートが一致してたらいいねボタンを表示しない -->
-      <?php if($_SESSION['id'] !== $post['id']): ?>
-        <!-- 取得していた全ツイートデータの中からいいねが押される対象となるデータを取得 -->
+      <!-- ログインIDと投稿されたツイートのmember_idが一致しなければいいねボタンを表示する -->
+      <?php if($_SESSION['id'] !== $post['member_id']): ?>
+        <!-- 取得していた全ツイートIDの中からいいねが押される対象となるIDを取得 -->
         <?php if(in_array($post['id'],$like_tweets)): ?>
         [<a href="likeaction.php?action=unlike&id=<?php echo $post['id']?>&member_id=<?php echo $_SESSION['id']; ?>">いいねを取り消す</a>]
         <?php else: ?>
         [<a href="likeaction.php?action=like&id=<?php echo $post['id']?>&member_id=<?php echo $_SESSION['id']; ?>">いいね!</a>]
         <?php endif; ?>
 
-      <?php endif; ?>
+
+        <!-- 取得していた全ツイートIDの中からフォローされる対象となるIDを取得 -->
+        <?php if(in_array($post['member_id'],$follows)): ?>
+        [[<a href="followaction.php?action=unfollow&followid=<?php echo $post['member_id']?>&member_id=<?php echo $_SESSION['id']; ?>">フォローを外す</a>]]
+        <?php else: ?>
+        [[<a href="followaction.php?action=follow&followid=<?php echo $post['member_id']?>&member_id=<?php echo $_SESSION['id']; ?>">フォローする</a>]]
+        <?php endif; ?>
+       <?php endif; ?>
+
 
 
       <?php if($_SESSION['id'] == $post['member_id']): ?>
-      [<a href="edit.php?id=<?php echo $post['id']; ?>" style="color: #00994C;">編集</a>]
-      [<a href="delete.php?id=<?php echo h($post['id']); ?>" style="color": #F33;>削除</a>]
-
-      <!-- foreaachでフォロー、アンフォローボタン実装 -->
-
-
+        [<a href="edit.php?id=<?php echo $post['id']; ?>" style="color: #00994C;">編集</a>]
+        [<a href="delete.php?id=<?php echo h($post['id']); ?>" style="color": #F33;>削除</a>]
       <?php endif; ?>
       </p>
 
