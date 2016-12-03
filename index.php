@@ -205,17 +205,17 @@
       <?php if($_SESSION['id'] !== $post['member_id']): ?>
         <!-- 取得していた全ツイートIDの中からいいねが押される対象となるIDを取得 -->
         <?php if(in_array($post['id'],$like_tweets)): ?>
-          [<a href="likeaction.php?action=unlike&id=<?php echo $post['id']?>&member_id=<?php echo $_SESSION['id']; ?>">いいねを取り消す</a>]<a >いいね件数：<?php echo $like_cnt; ?></a>]
+          [<a href="likeaction.php?action=unlike&id=<?php echo $post['id']?>&member_id=<?php echo $_SESSION['id']; ?>">いいねを取り消す</a>]<a>いいね件数：<?php echo $like_cnt; ?></a>
         <?php else: ?>
-          [<a href="likeaction.php?action=like&id=<?php echo $post['id']?>&member_id=<?php echo $_SESSION['id']; ?>">いいね!</a>]<a >いいね件数：<?php echo $like_cnt; ?></a>]
+          [<a href="likeaction.php?action=like&id=<?php echo $post['id']?>&member_id=<?php echo $_SESSION['id']; ?>">いいね!</a>]<a>いいね件数：<?php echo $like_cnt; ?></a>
         <?php endif; ?>
 
 
         <!-- 取得していた全ツイートIDの中からフォローされる対象となるIDを取得 -->
         <?php if(in_array($post['member_id'],$follows)): ?>
-          [[<a href="followaction.php?action=unfollow&followid=<?php echo $post['member_id']?>&member_id=<?php echo $_SESSION['id']; ?>">フォローを外す</a>][<a>フォロワー数：<?php echo $follow_cnt; ?></a>]
+          [[<a href="followaction.php?action=unfollow&followid=<?php echo $post['member_id']?>&member_id=<?php echo $_SESSION['id']; ?>">フォローを外す</a>]<a>フォロワー数：<?php echo $follow_cnt; ?></a>
         <?php else: ?>
-          [[<a href="followaction.php?action=follow&followid=<?php echo $post['member_id']?>&member_id=<?php echo $_SESSION['id']; ?>">フォローする</a>]][<a>フォロワー数：<?php echo $follow_cnt; ?></a>]
+          [[<a href="followaction.php?action=follow&followid=<?php echo $post['member_id']?>&member_id=<?php echo $_SESSION['id']; ?>">フォローする</a>]]<a>フォロワー数：<?php echo $follow_cnt; ?></a>
         <?php endif; ?>
        <?php endif; ?>
 

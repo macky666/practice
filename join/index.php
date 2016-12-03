@@ -65,7 +65,7 @@ session_start();
         }
 
     }
-    
+
 
 // 書き直し
     if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'rewrite'){
